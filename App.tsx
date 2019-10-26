@@ -1,28 +1,26 @@
-import React, {Fragment} from 'react';
-import {FlatList, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { createAppContainer } from 'react-navigation';
+import React from 'react';
+import {FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {createBottomTabNavigator} from 'react-navigation-tabs';
+import {createAppContainer} from 'react-navigation';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {CardData, feelings, needs} from "./Data";
+import {Card, CardData, feelings, needs} from "./Data";
 
 
 type CardProps = {
-    lines: CardData[]
+    card: Card,
+    selected: boolean,
+    onClick: () => void
 }
 
 
-class Card extends React.PureComponent<CardProps> {
-    _onPress = () => {
-    };
-
+class CardView extends React.PureComponent<CardProps> {
     render() {
         return (
-            <TouchableOpacity onPress={this._onPress} style={styles.card}>
+            <TouchableOpacity onPress={this.props.onClick} style={this.props.selected ? styles.selectedCard : styles.card}>
                 <View>
-
-                    {this.props.lines.map((line, i) => {
-                        const fontSize = Card.getFontSize(line);
+                    {this.props.card.data.map((line, i) => {
+                        const fontSize = CardView.getFontSize(line);
                         return <Text style={{margin: 1, textAlign: 'center', fontSize: fontSize}} key={i}>{line.text}</Text>
                     })}
                 </View>
@@ -31,7 +29,7 @@ class Card extends React.PureComponent<CardProps> {
     }
 
     private static getFontSize(card: CardData): number  {
-        const size = card.size ? card.size : Card.guessFontSize(card.text);
+        const size = card.size ? card.size : CardView.guessFontSize(card.text);
 
         switch (size) {
             case 1: return 20;
@@ -52,12 +50,24 @@ class Card extends React.PureComponent<CardProps> {
 }
 
 type CardListProps = {
-    cards: CardData[][]
+    cards: Card[]
+}
+
+type CardListState = {
+    selectedCards: string[]
 }
 
 
-class CardList extends React.PureComponent<CardListProps> {
+class CardList extends React.Component<CardListProps, CardListState> {
+    constructor(props: CardListProps) {
+        super(props);
+        this.state = {
+            selectedCards: []
+        }
+    }
+
     render() {
+        console.log(this.state.selectedCards)
         return <ScrollView
             contentInsetAdjustmentBehavior="automatic"
             style={styles.scrollView}>
@@ -66,9 +76,23 @@ class CardList extends React.PureComponent<CardListProps> {
                 data={this.props.cards}
                 numColumns={1}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({item}) => <Card lines={item}/>}
+                renderItem={({item}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.selectCard(item)}/>}
             />
         </ScrollView>
+    }
+
+    private isSelected(item: Card): boolean {
+        return this.state.selectedCards.indexOf(item.id) != -1
+    }
+
+    private selectCard(item: Card) {
+        let selected = this.state.selectedCards;
+        if (this.isSelected(item)) {
+            this.setState({selectedCards: selected.filter(id => id != item.id)})
+        } else {
+            selected.push(item.id);
+            this.setState({selectedCards: selected})
+        }
     }
 }
 
@@ -95,6 +119,17 @@ const styles = StyleSheet.create({
         marginVertical: 20
     },
     card: {
+        borderRadius: 4,
+        borderWidth: 0.5,
+        borderColor: '#d6d7da',
+        height: 80,
+        padding: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+    },
+    selectedCard: {
+        backgroundColor: '#ffd7da',
         borderRadius: 4,
         borderWidth: 0.5,
         borderColor: '#d6d7da',

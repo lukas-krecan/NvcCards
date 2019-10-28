@@ -109,13 +109,13 @@ export default class App extends React.Component<AppProps, AppState> {
         let activeScreen = this.state.activeScreen;
         let noCardsSelected = this.state.selectedCards.length == 0;
         return (
-            <View style={{flex: 1, marginVertical: 20}}>
+            <View style={{flex: 1}}>
                 <View style={{flex: 100}}>
                     {activeScreen == needsScreen && <CardList cards={needs} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)}/>}
                     {activeScreen == feelingsScreen && <CardList cards={feelings} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)}/>}
                     {activeScreen == helpScreen && <Help/>}
                 </View>
-                <View style={{flex: 1, minHeight: 30, flexDirection: 'row'}}>
+                <View style={styles.drawer}>
                     <View style={{flex: 2}}>
                         {this.cardsButton("Potřeby", () => this.setState({activeScreen: needsScreen}), activeScreen == needsScreen)}
                     </View>
@@ -129,7 +129,7 @@ export default class App extends React.Component<AppProps, AppState> {
                     </View>
                     <View style={{flex: 1}}>
                         <TouchableOpacity onPress={() => this.setState({activeScreen: helpScreen})} style={styles.icon}>
-                            <Icon name="question" size={20}/>
+                            <Icon name="question" size={20} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -163,8 +163,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
     },
     container: {
-        flex: 1,
-        marginVertical: 20
+        flex: 1
     },
     card: {
         borderRadius: 4,
@@ -198,5 +197,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    drawer: {
+        flex: 1,
+        minHeight: 60,
+        flexDirection: 'row',
+        borderWidth: 0,
+        borderTopWidth: 1,
+        borderColor: '#888'
     }
 });

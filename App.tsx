@@ -107,6 +107,7 @@ export default class App extends React.Component<AppProps, AppState> {
 
     render() {
         let activeScreen = this.state.activeScreen;
+        let noCardsSelected = this.state.selectedCards.length == 0;
         return (
             <View style={{flex: 1, marginVertical: 20}}>
                 <View style={{flex: 100, marginTop: 20}}>
@@ -122,8 +123,8 @@ export default class App extends React.Component<AppProps, AppState> {
                         {this.cardsButton("Pocity", () => this.setState({activeScreen: feelingsScreen}), activeScreen == feelingsScreen)}
                     </View>
                     <View style={{flex: 1}}>
-                        <TouchableOpacity onPress={() => this.setState({selectedCards: []})} style={styles.icon} disabled={this.state.selectedCards.length == 0}>
-                            <Icon name="trash-o" size={20}/>
+                        <TouchableOpacity onPress={() => this.setState({selectedCards: []})} style={styles.icon} disabled={noCardsSelected}>
+                            <Icon name="trash-o" size={20} style={[noCardsSelected && styles.disabledText]}/>
                         </TouchableOpacity>
                     </View>
                     <View style={{flex: 1}}>
@@ -189,6 +190,9 @@ const styles = StyleSheet.create({
     },
     selectedButtonText:{
         fontWeight: 'bold'
+    },
+    disabledText: {
+      color: 'grey'
     },
     icon: {
         flex: 1,

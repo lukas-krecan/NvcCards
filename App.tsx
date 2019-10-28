@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
     Button,
-    FlatList,
+    FlatList, SafeAreaView,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -107,7 +107,7 @@ export default class App extends React.Component<AppProps, AppState> {
         let activeScreen = this.state.activeScreen;
         let noCardsSelected = this.state.selectedCards.length == 0;
         return (
-            <View style={{flex: 1}}>
+            <SafeAreaView style={{flex: 1}}>
                 <View style={{flex: 100}}>
                     {activeScreen == needsScreen && <CardList cards={needs} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)}/>}
                     {activeScreen == feelingsScreen && <CardList cards={feelings} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)}/>}
@@ -131,7 +131,7 @@ export default class App extends React.Component<AppProps, AppState> {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
+            </SafeAreaView>
         );
     }
 

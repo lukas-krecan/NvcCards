@@ -33,6 +33,7 @@ export class Help extends React.PureComponent {
             <WebView
                 originWhitelist={['*']}
                 source={{html: content}}
+                style={{margin: 10}}
             />
         );
     }

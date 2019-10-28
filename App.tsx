@@ -9,8 +9,6 @@ import {
     YellowBox
 } from 'react-native';
 
-import { WebView } from 'react-native-webview';
-
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Card, CardData, feelings, needs} from "./Data";
 import Icon from 'react-native-vector-icons/FontAwesome';

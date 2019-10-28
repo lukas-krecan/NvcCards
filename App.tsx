@@ -1,11 +1,24 @@
 import React from 'react';
-import {FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+    Button,
+    FlatList,
+    NamedStyles,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    YellowBox
+} from 'react-native';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {createAppContainer} from 'react-navigation';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Card, CardData, feelings, needs} from "./Data";
 
+YellowBox.ignoreWarnings([
+    'Warning: componentWillMount has been renamed'
+]);
 
 type CardProps = {
     card: Card,
@@ -67,18 +80,14 @@ class CardList extends React.Component<CardListProps, CardListState> {
     }
 
     render() {
-        console.log(this.state.selectedCards)
-        return <ScrollView
-            contentInsetAdjustmentBehavior="automatic"
-            style={styles.scrollView}>
-            <FlatList
+        return <FlatList
                 style={styles.container}
+                contentInsetAdjustmentBehavior="automatic"
                 data={this.props.cards}
                 numColumns={1}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.selectCard(item)}/>}
-            />
-        </ScrollView>
+        />
     }
 
     private isSelected(item: Card): boolean {
@@ -103,9 +112,31 @@ const FeelingsScreen = () => <CardList cards={feelings} />;
 const TabNavigator = createBottomTabNavigator({
     Needs: NeedsScreen,
     Feelings: FeelingsScreen,
+},
+{
+    defaultNavigationOptions: ({ navigation }) => ({
+        tabBarIcon: ({ focused, horizontal, tintColor }) => {
+            const { routeName } = navigation.state;
+            return <Button title={routeName} onPress={() => navigation.navigate(routeName)}/>;
+        },
+    }),
+    tabBarOptions: {
+        showLabel: false
+    },
 });
 
 export default createAppContainer(TabNavigator);
+
+const cardStyle: NamedStyles =  {
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+    height: 80,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+};
 
 const styles = StyleSheet.create({
     scrollView: {
@@ -119,25 +150,11 @@ const styles = StyleSheet.create({
         marginVertical: 20
     },
     card: {
-        borderRadius: 4,
-        borderWidth: 0.5,
-        borderColor: '#d6d7da',
-        height: 80,
-        padding: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
+        ...cardStyle
     },
     selectedCard: {
-        backgroundColor: '#ffd7da',
-        borderRadius: 4,
-        borderWidth: 0.5,
-        borderColor: '#d6d7da',
-        height: 80,
-        padding: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
+        backgroundColor: '#d4ebf2',
+        ...cardStyle
     },
     item: {
         margin: 1,

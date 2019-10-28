@@ -110,7 +110,7 @@ export default class App extends React.Component<AppProps, AppState> {
         let noCardsSelected = this.state.selectedCards.length == 0;
         return (
             <View style={{flex: 1, marginVertical: 20}}>
-                <View style={{flex: 100, marginTop: 20}}>
+                <View style={{flex: 100}}>
                     {activeScreen == needsScreen && <CardList cards={needs} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)}/>}
                     {activeScreen == feelingsScreen && <CardList cards={feelings} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)}/>}
                     {activeScreen == helpScreen && <Help/>}

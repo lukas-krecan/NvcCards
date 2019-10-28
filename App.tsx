@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {
     Button,
     FlatList,
@@ -9,9 +9,12 @@ import {
     YellowBox
 } from 'react-native';
 
+import { WebView } from 'react-native-webview';
+
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Card, CardData, feelings, needs} from "./Data";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {Help} from "./Help";
 
 YellowBox.ignoreWarnings([
     'Warning: componentWillMount has been renamed'
@@ -91,6 +94,7 @@ type AppState = {
 
 const needsScreen = 'needs';
 const feelingsScreen = 'feelings';
+const helpScreen = 'help';
 
 export default class App extends React.Component<AppProps, AppState> {
     constructor(props: AppProps) {
@@ -105,19 +109,27 @@ export default class App extends React.Component<AppProps, AppState> {
         let activeScreen = this.state.activeScreen;
         return (
             <View style={{flex: 1, marginVertical: 20}}>
-                <View style={{flex: 100}}>
+                <View style={{flex: 100, marginTop: 20}}>
                     {activeScreen == needsScreen && <CardList cards={needs} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)}/>}
                     {activeScreen == feelingsScreen && <CardList cards={feelings} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)}/>}
+                    {activeScreen == helpScreen && <Help/>}
                 </View>
                 <View style={{flex: 1, minHeight: 30, flexDirection: 'row'}}>
-                    <View style={{flex: 1}}>
-                        {this.cardsButton("Potřeby", () => this.needsButtonClicked(), activeScreen == needsScreen)}
+                    <View style={{flex: 2}}>
+                        {this.cardsButton("Potřeby", () => this.setState({activeScreen: needsScreen}), activeScreen == needsScreen)}
+                    </View>
+                    <View style={{flex: 2}}>
+                        {this.cardsButton("Pocity", () => this.setState({activeScreen: feelingsScreen}), activeScreen == feelingsScreen)}
                     </View>
                     <View style={{flex: 1}}>
-                        {this.cardsButton("Pocity", () => this.feelingsButtonClicked(), activeScreen == feelingsScreen)}
+                        <TouchableOpacity onPress={() => this.setState({selectedCards: []})} style={styles.icon} disabled={this.state.selectedCards.length == 0}>
+                            <Icon name="trash-o" size={20}/>
+                        </TouchableOpacity>
                     </View>
                     <View style={{flex: 1}}>
-                        <Button title="Clear" onPress={() => this.setState({selectedCards: []})}/>
+                        <TouchableOpacity onPress={() => this.setState({activeScreen: helpScreen})} style={styles.icon}>
+                            <Icon name="question" size={20}/>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -125,9 +137,10 @@ export default class App extends React.Component<AppProps, AppState> {
     }
 
 
-
     private cardsButton(title: String, onPress: () => void, active: boolean) {
-        return <Button title={title} onPress={onPress} disabled={active} style={styles.tabButton}/>;
+        return <TouchableOpacity  onPress={onPress} disabled={active} style={styles.tabButton}>
+            <Text style={[{fontSize: 20}, active && styles.selectedButtonText]}>{title}</Text>
+        </TouchableOpacity>;
     }
 
     private selectCard(item: Card) {
@@ -138,13 +151,6 @@ export default class App extends React.Component<AppProps, AppState> {
             selected.push(item.id);
             this.setState({selectedCards: selected})
         }
-    }
-
-    private needsButtonClicked() {
-        this.setState({activeScreen: needsScreen})
-    }
-    private feelingsButtonClicked() {
-        this.setState({activeScreen: feelingsScreen})
     }
 }
 
@@ -177,6 +183,16 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     tabButton:{
-
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    selectedButtonText:{
+        fontWeight: 'bold'
+    },
+    icon: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });

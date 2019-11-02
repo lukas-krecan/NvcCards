@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+    AppState,
     Button,
     FlatList, SafeAreaView,
     StyleSheet,
@@ -8,6 +9,8 @@ import {
     View,
     YellowBox
 } from 'react-native';
+
+import AsyncStorage from '@react-native-community/async-storage';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Card, CardData, feelings, needs} from "./Data";
@@ -84,9 +87,9 @@ class CardList extends React.PureComponent<CardListProps> {
     }
 }
 
-type AppProps = { }
+type NvcCardsAppProps = { }
 
-type AppState = {
+type NvcCardsAppState = {
     activeScreen: string,
     selectedCards: string[]
 }
@@ -95,14 +98,42 @@ const needsScreen = 'needs';
 const feelingsScreen = 'feelings';
 const helpScreen = 'help';
 
-export default class App extends React.Component<AppProps, AppState> {
-    constructor(props: AppProps) {
+export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppState> {
+    constructor(props: NvcCardsAppProps) {
         super(props);
         this.state = {
             activeScreen: needsScreen,
             selectedCards: []
         }
     }
+
+    componentDidMount() {
+        AppState.addEventListener('change', this.handleAppStateChange);
+        this.recoverState();
+    }
+
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this.handleAppStateChange);
+    }
+
+    private handleAppStateChange = (nextAppState: string) => {
+        if (nextAppState === 'background' || nextAppState === 'inactive') {
+            this.storeState();
+        }
+    };
+
+    private storeState() {
+        AsyncStorage.setItem('@last', JSON.stringify(this.state))
+    }
+
+    private recoverState() {
+        AsyncStorage.getItem('@last').then(result => {
+            if (result != null) {
+                this.setState(JSON.parse(result))
+            }
+        })
+    }
+
 
     render() {
         let activeScreen = this.state.activeScreen;

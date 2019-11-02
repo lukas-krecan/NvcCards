@@ -1,5 +1,6 @@
 import React from "react";
 import {WebView} from "react-native-webview";
+import {View} from "react-native";
 
 const content = `
 <!DOCTYPE html>
@@ -27,14 +28,20 @@ const content = `
 </html>
 `;
 
-export class Help extends React.PureComponent {
+type HelpProps = {
+    active: boolean
+}
+
+export class Help extends React.PureComponent<HelpProps> {
     render() {
         return (
-            <WebView
-                originWhitelist={['*']}
-                source={{html: content}}
-                style={{margin: 10}}
-            />
+            <View style={this.props.active ? {flex: 1} : {display: 'none'}}>
+                <WebView
+                    originWhitelist={['*']}
+                    source={{html: content}}
+                    style={{margin: 10}}
+                />
+            </View>
         );
     }
 }

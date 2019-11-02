@@ -63,13 +63,14 @@ class CardView extends React.PureComponent<CardProps> {
 type CardListProps = {
     cards: Card[],
     selectedCards: string[],
-    onCardClick: (card: Card) => void
+    onCardClick: (card: Card) => void,
+    active: boolean
 }
 
 class CardList extends React.PureComponent<CardListProps> {
     render() {
         return <FlatList
-                style={styles.container}
+                style={this.props.active ? styles.container: styles.hidden}
                 contentInsetAdjustmentBehavior="automatic"
                 data={this.props.cards}
                 numColumns={1}
@@ -109,9 +110,9 @@ export default class App extends React.Component<AppProps, AppState> {
         return (
             <SafeAreaView style={{flex: 1}}>
                 <View style={{flex: 100}}>
-                    {activeScreen == needsScreen && <CardList cards={needs} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)}/>}
-                    {activeScreen == feelingsScreen && <CardList cards={feelings} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)}/>}
-                    {activeScreen == helpScreen && <Help/>}
+                    <CardList cards={needs} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == needsScreen}/>
+                    <CardList cards={feelings} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == feelingsScreen}/>
+                    <Help active={activeScreen == helpScreen}/>
                 </View>
                 <View style={styles.drawer}>
                     <View style={{flex: 2}}>
@@ -203,5 +204,8 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderTopWidth: 1,
         borderColor: '#888'
+    },
+    hidden: {
+        display: 'none'
     }
 });

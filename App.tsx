@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {
     AppState,
-    Button,
     FlatList, SafeAreaView,
     StyleSheet,
     Text,
@@ -72,14 +71,18 @@ type CardListProps = {
 
 class CardList extends React.PureComponent<CardListProps> {
     render() {
-        return <FlatList
-                style={this.props.active ? styles.container: styles.hidden}
-                contentInsetAdjustmentBehavior="automatic"
-                data={this.props.cards}
-                numColumns={1}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({item}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.props.onCardClick(item)}/>}
-        />
+        if (this.props.cards.length != 0) {
+            return <FlatList
+                    style={this.props.active ? styles.container: styles.hidden}
+                    contentInsetAdjustmentBehavior="automatic"
+                    data={this.props.cards}
+                    numColumns={1}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({item}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.props.onCardClick(item)}/>}
+            />
+        } else {
+            return <Text style={[{textAlign: 'center'}, {marginTop: 20}, this.props.active ? styles.container: styles.hidden]}>Nejsou vybrány žádné kartičky</Text>
+        }
     }
 
     private isSelected(item: Card): boolean {
@@ -157,8 +160,10 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
                     <View style={{flex: 2}}>
                         {this.cardsButton("Pocity", feelingsScreen)}
                     </View>
-                    <View style={{flex: 2}}>
-                        {this.cardsButton("Výběr", selectionScreen)}
+                    <View style={{flex: 1}}>
+                        <TouchableOpacity onPress={() => this.setState({activeScreen: selectionScreen})} style={styles.icon}>
+                            <Icon name="list" size={20} style={[noCardsSelected && styles.disabledText]}/>
+                        </TouchableOpacity>
                     </View>
                     <View style={{flex: 1}}>
                         <TouchableOpacity onPress={() => this.setState({selectedCards: []})} style={styles.icon} disabled={noCardsSelected}>

@@ -96,6 +96,7 @@ type NvcCardsAppState = {
 
 const needsScreen = 'needs';
 const feelingsScreen = 'feelings';
+const selectionScreen = 'selection';
 const helpScreen = 'help';
 
 export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppState> {
@@ -136,21 +137,28 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
 
 
     render() {
-        let activeScreen = this.state.activeScreen;
-        let noCardsSelected = this.state.selectedCards.length == 0;
+        const activeScreen = this.state.activeScreen;
+        const selectedCards = this.state.selectedCards;
+        const noCardsSelected = selectedCards.length == 0;
+        const selectedCardsList: Card[] = needs.filter( c => this.isCardSelected(c.id) ).concat(feelings.filter(c => this.isCardSelected(c.id) ));
+
         return (
             <SafeAreaView style={{flex: 1}}>
                 <View style={{flex: 100}}>
-                    <CardList cards={needs} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == needsScreen}/>
-                    <CardList cards={feelings} selectedCards={this.state.selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == feelingsScreen}/>
+                    <CardList cards={needs} selectedCards={selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == needsScreen}/>
+                    <CardList cards={feelings} selectedCards={selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == feelingsScreen}/>
+                    <CardList cards={selectedCardsList} selectedCards={selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == selectionScreen}/>
                     <Help active={activeScreen == helpScreen}/>
                 </View>
                 <View style={styles.drawer}>
                     <View style={{flex: 2}}>
-                        {this.cardsButton("Potřeby", () => this.setState({activeScreen: needsScreen}), activeScreen == needsScreen)}
+                        {this.cardsButton("Potřeby", needsScreen)}
                     </View>
                     <View style={{flex: 2}}>
-                        {this.cardsButton("Pocity", () => this.setState({activeScreen: feelingsScreen}), activeScreen == feelingsScreen)}
+                        {this.cardsButton("Pocity", feelingsScreen)}
+                    </View>
+                    <View style={{flex: 2}}>
+                        {this.cardsButton("Výběr", selectionScreen)}
                     </View>
                     <View style={{flex: 1}}>
                         <TouchableOpacity onPress={() => this.setState({selectedCards: []})} style={styles.icon} disabled={noCardsSelected}>
@@ -168,8 +176,13 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
     }
 
 
-    private cardsButton(title: String, onPress: () => void, active: boolean) {
-        return <TouchableOpacity  onPress={onPress} disabled={active} style={styles.tabButton}>
+    private isCardSelected(id: string) {
+        return this.state.selectedCards.indexOf(id) != -1;
+    }
+
+    private cardsButton(title: String, screenName: string) {
+        const active = this.state.activeScreen == screenName;
+        return <TouchableOpacity onPress={() => this.setState({activeScreen: screenName})} disabled={active} style={styles.tabButton}>
             <Text style={[{fontSize: 20}, active && styles.selectedButtonText]}>{title}</Text>
         </TouchableOpacity>;
     }

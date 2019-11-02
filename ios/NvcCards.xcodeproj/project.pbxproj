@@ -8,35 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* NvcCardsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* NvcCardsTests.m */; };
-		0FEBCAF2BCE8497CA23293F5 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CBF40A8AB0394FD191B6A3FD /* Entypo.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1428920EAAB547E0A2F893A5 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F41408CED3A4E6C86AEA7AE /* EvilIcons.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* NvcCardsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* NvcCardsTests.m */; };
-		34BAED370870430E975D0D8C /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FDF45B66B71D40C29BEDE564 /* Fontisto.ttf */; };
-		37F96ACE00F34744A5BCB820 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 638345C3B0E94EAD9081CB55 /* MaterialIcons.ttf */; };
-		3A4D9C002D074F05B516F519 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3FF0D2AD6572419E9FE1588E /* AntDesign.ttf */; };
-		46B115989D784BB8B221A975 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9B2FC238F19D454FA464CDFF /* FontAwesome5_Regular.ttf */; };
-		5006BA0C968B4FFDB5657362 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0046E7AE37D3437792373E90 /* FontAwesome.ttf */; };
-		5B9A1BE468BB4897A758F265 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6EA98BD01C2144CDB4C22CE3 /* Feather.ttf */; };
-		69C2B5C950B648B69FAB301A /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F476C6AAC9EC4D609D81AC25 /* Octicons.ttf */; };
-		7FDA907ECFD34DEB9DC9F8A2 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E2EF873BAD804C19819EC1AD /* FontAwesome5_Brands.ttf */; };
-		8332768488CC4B97B6B0AA37 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E54C9970A036447ABDF0F645 /* Zocial.ttf */; };
-		8EAF68AFEE6644E6B8C33809 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF2057E9BDD74AAF817C7166 /* FontAwesome5_Solid.ttf */; };
 		9216CDA664CD3688ABC7D78D /* libPods-NvcCards-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 653A63162912F936C843D4AD /* libPods-NvcCards-tvOS.a */; };
 		9E8502E481C677E504DB87B4 /* libPods-NvcCardsTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55FFD07B53B70DA65C1F3D63 /* libPods-NvcCardsTests.a */; };
-		A01E0D7805324F7188829703 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 07FBE05476C246E7A959B9EA /* SimpleLineIcons.ttf */; };
 		AE36D1C402CF8945D0064F0D /* libPods-NvcCards.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B5C2A37FEB162E15BB6341A8 /* libPods-NvcCards.a */; };
-		D0EABF8CAD074A81A8783EAF /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 17ED2A5FE84948CAB23F9696 /* MaterialCommunityIcons.ttf */; };
 		D17E9C33FAC6CD51D7E33EF5 /* libPods-NvcCards-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7AAFBF14C36A8A5119030B /* libPods-NvcCards-tvOSTests.a */; };
-		D18DE89D53454BFCA145D999 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 59530CE1CBD846738A46A4E4 /* Foundation.ttf */; };
-		E30941E6DD4B4764A68B0DF8 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0D74323C2C2C477E9DDEED55 /* Ionicons.ttf */; };
-/* End PBXBuildFile section */
+	/* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		00E356F41AD99517003FC87E /* PBXContainerItemProxy */ = {

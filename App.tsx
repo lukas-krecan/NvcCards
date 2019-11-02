@@ -34,7 +34,7 @@ class CardView extends React.PureComponent<CardProps> {
                 <View>
                     {this.props.card.data.map((line, i) => {
                         const fontSize = CardView.getFontSize(line);
-                        return <Text style={{margin: 1, textAlign: 'center', fontSize: fontSize}} key={i}>{line.text}</Text>
+                        return <Text style={[styles.cardText, {fontSize: fontSize}]} key={i}>{line.text}</Text>
                     })}
                 </View>
             </TouchableOpacity>
@@ -154,25 +154,14 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
                     <Help active={activeScreen == helpScreen}/>
                 </View>
                 <View style={styles.drawer}>
-                    <View style={{flex: 2}}>
-                        {this.cardsButton("Potřeby", needsScreen)}
-                    </View>
-                    <View style={{flex: 2}}>
-                        {this.cardsButton("Pocity", feelingsScreen)}
-                    </View>
-                    <View style={{flex: 1}}>
-                        <TouchableOpacity onPress={() => this.setState({activeScreen: selectionScreen})} style={styles.icon}>
-                            <Icon name="list" size={20} style={[noCardsSelected && styles.disabledText]}/>
-                        </TouchableOpacity>
-                    </View>
+
+                    {this.cardsButton("Potřeby", needsScreen)}
+                    {this.cardsButton("Pocity", feelingsScreen)}
+                    {this.tabIcon(selectionScreen, "list")}
+                    {this.tabIcon(helpScreen, "question")}
                     <View style={{flex: 1}}>
                         <TouchableOpacity onPress={() => this.setState({selectedCards: []})} style={styles.icon} disabled={noCardsSelected}>
-                            <Icon name="trash-o" size={20} style={[noCardsSelected && styles.disabledText]}/>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{flex: 1}}>
-                        <TouchableOpacity onPress={() => this.setState({activeScreen: helpScreen})} style={styles.icon}>
-                            <Icon name="question" size={20} />
+                            <Icon name="trash-o" size={20} style={[styles.inactiveText]}/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -187,9 +176,11 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
 
     private cardsButton(title: String, screenName: string) {
         const active = this.state.activeScreen == screenName;
-        return <TouchableOpacity onPress={() => this.setState({activeScreen: screenName})} disabled={active} style={styles.tabButton}>
-            <Text style={[{fontSize: 20}, active && styles.selectedButtonText]}>{title}</Text>
-        </TouchableOpacity>;
+        return <View style={[{flex: 2}, active && {borderTopWidth: 2}]}>
+            <TouchableOpacity onPress={() => this.setState({activeScreen: screenName})} disabled={active} style={styles.tabButton}>
+                <Text style={[styles.buttonText, active ? styles.selectedButtonText : styles.inactiveText]}>{title}</Text>
+            </TouchableOpacity>
+        </View>;
     }
 
     private selectCard(item: Card) {
@@ -200,6 +191,15 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
             selected.push(item.id);
             this.setState({selectedCards: selected})
         }
+    }
+
+    private tabIcon(screenName: string, icon: string) {
+        const active = this.state.activeScreen == screenName;
+        return <View style={[{flex: 1}, active && {borderTopWidth: 2}]}>
+            <TouchableOpacity onPress={() => this.setState({activeScreen: screenName})} style={styles.icon}>
+                <Icon name={icon} size={20} style={[active ? styles.buttonText : styles.inactiveText]}/>
+            </TouchableOpacity>
+        </View>
     }
 }
 
@@ -236,9 +236,12 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     selectedButtonText:{
-        fontWeight: 'bold'
+        color: 'black'
     },
-    disabledText: {
+    buttonText: {
+        fontSize: 20,
+    },
+    inactiveText: {
       color: 'grey'
     },
     icon: {
@@ -256,5 +259,9 @@ const styles = StyleSheet.create({
     },
     hidden: {
         display: 'none'
+    },
+    cardText: {
+        margin: 1,
+        textAlign: 'center'
     }
 });

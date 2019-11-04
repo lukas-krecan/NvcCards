@@ -154,9 +154,8 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
                     <Help active={activeScreen == helpScreen}/>
                 </View>
                 <View style={styles.drawer}>
-
-                    {this.cardsButton("Potřeby", needsScreen)}
                     {this.cardsButton("Pocity", feelingsScreen)}
+                    {this.cardsButton("Potřeby", needsScreen)}
                     {this.tabIcon(selectionScreen, "list")}
                     {this.tabIcon(helpScreen, "question")}
                     <View style={{flex: 1}}>

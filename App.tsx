@@ -29,10 +29,11 @@ type CardProps = {
 
 class CardView extends React.PureComponent<CardProps> {
     render() {
+        const card = this.props.card;
         return (
-            <TouchableOpacity onPress={this.props.onClick} style={[styles.card, this.props.selected && styles.selected]}>
+            <TouchableOpacity onPress={this.props.onClick} style={[styles.card, this.props.selected && (card.id.startsWith('n') ? styles.selectedNeed : styles.selectedFeeling)]}>
                 <View>
-                    {this.props.card.data.map((line, i) => {
+                    {card.data.map((line, i) => {
                         const fontSize = CardView.getFontSize(line);
                         return <Text style={[styles.cardText, {fontSize: fontSize}]} key={i}>{line.text}</Text>
                     })}
@@ -222,8 +223,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flex: 1,
     },
-    selected: {
-        backgroundColor: '#d4ebf2',
+    selectedNeed: {
+        backgroundColor: '#d4ebf2'
+    },
+    selectedFeeling: {
+      backgroundColor:  '#f2dbd4'
     },
     item: {
         margin: 1,

@@ -15,6 +15,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Card, CardData, feelings, findCard, needs} from "./Data";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Help} from "./Help";
+import DraggableFlatList from 'react-native-draggable-flatlist'
 
 YellowBox.ignoreWarnings([
     'Warning: componentWillMount has been renamed'
@@ -23,7 +24,9 @@ YellowBox.ignoreWarnings([
 type CardProps = {
     card: Card,
     selected: boolean,
-    onClick: () => void
+    onClick: () => void,
+    move?: () => void,
+    moveEnd?: () => void
 }
 
 
@@ -31,7 +34,11 @@ class CardView extends React.PureComponent<CardProps> {
     render() {
         const card = this.props.card;
         return (
-            <TouchableOpacity onPress={this.props.onClick} style={[styles.card, this.props.selected && (card.id.startsWith('n') ? styles.selectedNeed : styles.selectedFeeling)]}>
+            <TouchableOpacity
+                onLongPress={this.props.move}
+                onPressOut={this.props.moveEnd}
+                onPress={this.props.onClick}
+                style={[styles.card, this.props.selected && (card.id.startsWith('n') ? styles.selectedNeed : styles.selectedFeeling)]}>
                 <View>
                     {card.data.map((line, i) => {
                         const fontSize = CardView.getFontSize(line);
@@ -72,15 +79,41 @@ type CardListProps = {
 
 class CardList extends React.PureComponent<CardListProps> {
     render() {
+        return <FlatList
+                style={this.props.active ? styles.container: styles.hidden}
+                contentInsetAdjustmentBehavior="automatic"
+                data={this.props.cards}
+                numColumns={1}
+                keyExtractor={(item) => item.id}
+                renderItem={({item}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.props.onCardClick(item)}/>}
+        />
+    }
+
+    private isSelected(item: Card): boolean {
+        return this.props.selectedCards.indexOf(item.id) != -1
+    }
+}
+
+type SelectedCardListProps = {
+    cards: Card[],
+    selectedCards: string[],
+    onCardClick: (card: Card) => void,
+    active: boolean,
+    onCardMove: (data: readonly Card[] | null) => void
+}
+
+class SelectedCardList extends React.PureComponent<SelectedCardListProps> {
+    render() {
         if (this.props.cards.length != 0) {
-            return <FlatList
-                    style={this.props.active ? styles.container: styles.hidden}
+            return <View style={this.props.active ? styles.container: styles.hidden}>
+                <DraggableFlatList
                     contentInsetAdjustmentBehavior="automatic"
                     data={this.props.cards}
-                    numColumns={1}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({item}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.props.onCardClick(item)}/>}
-            />
+                    keyExtractor={(item) => item.id}
+                    renderItem={({item, index, move, moveEnd}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.props.onCardClick(item)} move={move} moveEnd={moveEnd}/>}
+                    onMoveEnd={({ data }) => this.props.onCardMove(data)}
+                />
+            </View>
         } else {
             return <Text style={[{textAlign: 'center'}, {marginTop: 20}, this.props.active ? styles.container: styles.hidden]}>Nejsou vybrány žádné kartičky</Text>
         }
@@ -139,7 +172,6 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
         })
     }
 
-
     render() {
         const activeScreen = this.state.activeScreen;
         const selectedCards = this.state.selectedCards;
@@ -151,7 +183,7 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
                 <View style={{flex: 100}}>
                     <CardList cards={needs} selectedCards={selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == needsScreen}/>
                     <CardList cards={feelings} selectedCards={selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == feelingsScreen}/>
-                    <CardList cards={selectedCardsList} selectedCards={selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == selectionScreen}/>
+                    <SelectedCardList cards={selectedCardsList} selectedCards={selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == selectionScreen} onCardMove={(data) => this.moveSelectedCard(data)}/>
                     <Help active={activeScreen == helpScreen}/>
                 </View>
                 <View style={styles.drawer}>
@@ -168,12 +200,6 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
             </SafeAreaView>
         );
     }
-
-
-    private isCardSelected(id: string) {
-        return this.state.selectedCards.indexOf(id) != -1;
-    }
-
     private cardsButton(title: String, screenName: string) {
         const active = this.state.activeScreen == screenName;
         return <View style={[{flex: 2}, active && {borderTopWidth: 2}]}>
@@ -182,6 +208,12 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
             </TouchableOpacity>
         </View>;
     }
+
+    private moveSelectedCard(data: readonly Card[] | null) {
+        if (data != null) {
+            this.setState({selectedCards: data.map(c => c.id)});
+        }
+    };
 
     private selectCard(item: Card) {
         let selected = this.state.selectedCards;

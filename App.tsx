@@ -12,7 +12,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {Card, CardData, feelings, needs} from "./Data";
+import {Card, CardData, feelings, findCard, needs} from "./Data";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Help} from "./Help";
 
@@ -144,7 +144,7 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
         const activeScreen = this.state.activeScreen;
         const selectedCards = this.state.selectedCards;
         const noCardsSelected = selectedCards.length == 0;
-        const selectedCardsList: Card[] = needs.filter( c => this.isCardSelected(c.id) ).concat(feelings.filter(c => this.isCardSelected(c.id) ));
+        const selectedCardsList: Card[] = this.state.selectedCards.map(id => findCard(id));
 
         return (
             <SafeAreaView style={{flex: 1}}>

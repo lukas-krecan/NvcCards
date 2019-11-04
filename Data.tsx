@@ -96,3 +96,11 @@ export const feelings: Card[] = [
     {"id":"f37", data:[{text:'Pobavení'}, {text:'Rozpustilost', size: 2}]},
     {"id":"f38", data:[{text:'Naděje'}]}
 ];
+
+export function findCard(id: string): Card {
+    if (id.startsWith('n')) {
+        return needs.find(c => c.id == id) || {"id": id, data: []}
+    } else {
+        return feelings.find(c => c.id == id) || {"id": id, data: []}
+    }
+}

@@ -10,8 +10,6 @@ import {
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
-
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Card, CardData, feelings, findCard, needs} from "./Data";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Help} from "./Help";
@@ -236,12 +234,6 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
-        backgroundColor: Colors.lighter,
-    },
-    body: {
-        backgroundColor: Colors.white,
-    },
     container: {
         flex: 1
     },

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import { eventEmitter, initialMode } from 'react-native-dark-mode'
 import {Card, CardData, feelings, findCard, needs} from "./Data";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Help} from "./Help";
@@ -126,7 +127,8 @@ type NvcCardsAppProps = { }
 
 type NvcCardsAppState = {
     activeScreen: string,
-    selectedCards: string[]
+    selectedCards: string[],
+    darkMode: boolean
 }
 
 const needsScreen = 'needs';
@@ -139,12 +141,16 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
         super(props);
         this.state = {
             activeScreen: needsScreen,
-            selectedCards: []
+            selectedCards: [],
+            darkMode: initialMode == 'dark'
         }
     }
 
     componentDidMount() {
         AppState.addEventListener('change', this.handleAppStateChange);
+        eventEmitter.on('currentModeChanged', newMode => {
+            this.setState({darkMode: newMode == 'dark'})
+        });
         this.recoverState();
     }
 
@@ -170,6 +176,7 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
         })
     }
 
+
     render() {
         const activeScreen = this.state.activeScreen;
         const selectedCards = this.state.selectedCards;
@@ -178,7 +185,7 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
 
         return (
             <SafeAreaView style={{flex: 1}}>
-                <View style={{flex: 100}}>
+                <View style={{flex: 100, backgroundColor: this.state.darkMode ? 'black' : 'white'}}>
                     <CardList cards={needs} selectedCards={selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == needsScreen}/>
                     <CardList cards={feelings} selectedCards={selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == feelingsScreen}/>
                     <SelectedCardList cards={selectedCardsList} selectedCards={selectedCards} onCardClick={(item) => this.selectCard(item)} active={activeScreen == selectionScreen} onCardMove={(data) => this.moveSelectedCard(data)}/>

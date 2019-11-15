@@ -83,7 +83,8 @@ class CardList extends React.PureComponent<CardListProps> {
                 data={this.props.cards}
                 numColumns={1}
                 keyExtractor={(item) => item.id}
-                renderItem={({item}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.props.onCardClick(item)}/>}
+                renderItem={({item}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.props.onCardClick(item)}
+                />}
         />
     }
 
@@ -102,19 +103,18 @@ type SelectedCardListProps = {
 
 class SelectedCardList extends React.PureComponent<SelectedCardListProps> {
     render() {
-        if (this.props.cards.length != 0) {
-            return <View style={this.props.active ? styles.container: styles.hidden}>
-                <DraggableFlatList
-                    contentInsetAdjustmentBehavior="automatic"
-                    data={this.props.cards}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({item, index, move, moveEnd}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.props.onCardClick(item)} move={move} moveEnd={moveEnd}/>}
-                    onMoveEnd={({ data }) => this.props.onCardMove(data)}
-                />
-            </View>
-        } else {
-            return <Text style={[{textAlign: 'center'}, {marginTop: 20}, this.props.active ? styles.container: styles.hidden]}>Nejsou vybrány žádné kartičky</Text>
-        }
+        return <View style={this.props.active ? styles.container: styles.hidden}>
+            <DraggableFlatList
+                ListEmptyComponent={<Text style={[{textAlign: 'center'}, {marginTop: 20}]}>Nejsou vybrány žádné kartičky</Text>}
+                contentInsetAdjustmentBehavior="automatic"
+                data={this.props.cards}
+                keyExtractor={(item) => item.id}
+                renderItem={({item, index, move, moveEnd}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.props.onCardClick(item)} move={move} moveEnd={moveEnd}/>}
+                onMoveEnd={({ data }) => this.props.onCardMove(data)}
+            />
+            {this.props.cards.length < 5 && this.props.cards.length > 0 && <Text style={[{textAlign: 'center', marginBottom: 10, color: 'grey'}]}>Pokud chcete změnit pořadí kartiček, stačí jednu z nich chvíli podržet a pak přesunout.</Text>}
+        </View>
+
     }
 
     private isSelected(item: Card): boolean {

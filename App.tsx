@@ -112,7 +112,7 @@ class SelectedCardList extends React.PureComponent<SelectedCardListProps> {
                 renderItem={({item, index, move, moveEnd}) => <CardView card={item} selected={this.isSelected(item)} onClick={() => this.props.onCardClick(item)} move={move} moveEnd={moveEnd}/>}
                 onMoveEnd={({ data }) => this.props.onCardMove(data)}
             />
-            {this.props.cards.length < 5 && this.props.cards.length > 0 && <Text style={[{textAlign: 'center', marginBottom: 10, color: 'grey'}]}>Pokud chcete změnit pořadí kartiček, stačí jednu z nich chvíli podržet a pak přesunout.</Text>}
+            {this.props.cards.length < 5 && this.props.cards.length > 0 && <Text style={[{textAlign: 'center', margin: 10, color: 'grey'}]}>Pokud chcete změnit pořadí kartiček, stačí jednu z nich chvíli podržet a pak přesunout.</Text>}
         </View>
 
     }

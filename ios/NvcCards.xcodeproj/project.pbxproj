@@ -20,7 +20,7 @@
 		9E8502E481C677E504DB87B4 /* libPods-NvcCardsTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55FFD07B53B70DA65C1F3D63 /* libPods-NvcCardsTests.a */; };
 		AE36D1C402CF8945D0064F0D /* libPods-NvcCards.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B5C2A37FEB162E15BB6341A8 /* libPods-NvcCards.a */; };
 		D17E9C33FAC6CD51D7E33EF5 /* libPods-NvcCards-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7AAFBF14C36A8A5119030B /* libPods-NvcCards-tvOSTests.a */; };
-	/* End PBXBuildFile section */
+/* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		00E356F41AD99517003FC87E /* PBXContainerItemProxy */ = {
@@ -730,6 +730,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.javacrumbs.NvcCards;
 				PRODUCT_NAME = NvcCards;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -750,6 +751,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.javacrumbs.NvcCards;
 				PRODUCT_NAME = NvcCards;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

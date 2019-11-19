@@ -200,7 +200,7 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
     }
     private cardsButton(title: String, screenName: string) {
         const active = this.state.activeScreen == screenName;
-        return <View style={[{flex: 2}, active && {borderTopWidth: 2}]}>
+        return <View style={[{flex: 2}, active && styles.activeButton]}>
             <TouchableOpacity onPress={() => this.setState({activeScreen: screenName})} disabled={active} style={styles.tabButton}>
                 <Text style={[styles.buttonText, active ? styles.selectedButtonText : styles.inactiveText]}>{title}</Text>
             </TouchableOpacity>
@@ -225,7 +225,7 @@ export default class App extends React.Component<NvcCardsAppProps, NvcCardsAppSt
 
     private tabIcon(screenName: string, icon: string) {
         const active = this.state.activeScreen == screenName;
-        return <View style={[{flex: 1}, active && {borderTopWidth: 2}]}>
+        return <View style={[{flex: 1}, active && styles.activeButton]}>
             <TouchableOpacity onPress={() => this.setState({activeScreen: screenName})} style={styles.icon}>
                 <Icon name={icon} size={20} style={[active ? styles.buttonText : styles.inactiveText]}/>
             </TouchableOpacity>
@@ -265,8 +265,11 @@ const styles = StyleSheet.create({
     selectedButtonText:{
         color: 'black'
     },
+    activeButton:{
+        borderTopWidth: 2
+    },
     buttonText: {
-        fontSize: 20,
+        fontSize: 20
     },
     inactiveText: {
       color: 'grey'

@@ -12,6 +12,7 @@ const content = `
 <head>
     <title>Kartičky potřeb a pocitů</title>
     <style>
+        body {font-family: "HelveticaNeue", "Segoe UI", "Roboto", sans-serif}
         h1   {font-size: 60px;}
         p    {font-size: 50px;}
         .smaller {font-size: 30px;}

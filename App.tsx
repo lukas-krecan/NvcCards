@@ -20,8 +20,8 @@ type CardProps = {
   card: Card;
   selected: boolean;
   onClick: () => void;
-  move?: () => void;
-  moveEnd?: () => void;
+  drag?: () => void;
+  isDragging?: boolean;
 };
 
 class CardView extends React.PureComponent<CardProps> {
@@ -29,8 +29,7 @@ class CardView extends React.PureComponent<CardProps> {
     const card = this.props.card;
     return (
       <TouchableOpacity
-        onLongPress={this.props.move}
-        onPressOut={this.props.moveEnd}
+        onLongPress={this.props.drag}
         onPress={this.props.onClick}
         style={[
           styles.card,
@@ -114,7 +113,7 @@ type SelectedCardListProps = {
   selectedCards: string[];
   onCardClick: (card: Card) => void;
   active: boolean;
-  onCardMove: (data: readonly Card[] | null) => void;
+  onCardDrag: (data: readonly Card[] | null) => void;
 };
 
 class SelectedCardList extends React.PureComponent<SelectedCardListProps> {
@@ -130,16 +129,16 @@ class SelectedCardList extends React.PureComponent<SelectedCardListProps> {
           contentInsetAdjustmentBehavior="automatic"
           data={this.props.cards}
           keyExtractor={(item) => item.id}
-          renderItem={({item, index, move, moveEnd}) => (
+          renderItem={({item, index, drag, isActive}) => (
             <CardView
               card={item}
               selected={this.isSelected(item)}
               onClick={() => this.props.onCardClick(item)}
-              move={move}
-              moveEnd={moveEnd}
+              drag={drag}
+              isDragging={isActive}
             />
           )}
-          onMoveEnd={({data}) => this.props.onCardMove(data)}
+          onDragEnd={({data}) => this.props.onCardDrag(data)}
         />
         {this.props.cards.length < 5 && this.props.cards.length > 0 && (
           <Text style={[{textAlign: 'center', margin: 10, color: 'grey'}]}>
@@ -233,7 +232,7 @@ export default class App extends React.Component<
             selectedCards={selectedCards}
             onCardClick={(item) => this.selectCard(item)}
             active={activeScreen === selectionScreen}
-            onCardMove={(data) => this.moveSelectedCard(data)}
+            onCardDrag={(data) => this.moveSelectedCard(data)}
           />
           <Help active={activeScreen === helpScreen} />
         </View>

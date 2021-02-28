@@ -46,7 +46,7 @@ class CardView extends React.PureComponent<CardProps> {
               <Text style={[styles.cardText, {fontSize: fontSize}]} key={i}>
                 {line.text}
               </Text>
-            )
+            );
           })}
         </View>
       </TouchableOpacity>
@@ -101,7 +101,7 @@ class CardList extends React.PureComponent<CardListProps> {
           />
         )}
       />
-    )
+    );
   }
 
   private isSelected(item: Card): boolean {
@@ -211,9 +211,7 @@ export default class App extends React.Component<
     const activeScreen = this.state.activeScreen;
     const selectedCards = this.state.selectedCards;
     const noCardsSelected = selectedCards.length === 0;
-    const selectedCardsList: Card[] = this.state.selectedCards.map((id) =>
-      findCard(id),
-    );
+    const selectedCardsList: Card[] = this.getSelectedCardsList();
 
     return (
       <SafeAreaView style={{flex: 1}}>
@@ -264,6 +262,13 @@ export default class App extends React.Component<
       </SafeAreaView>
     );
   }
+
+  private getSelectedCardsList() {
+    return this.state.selectedCards.map((id) =>
+        findCard(id),
+    );
+  }
+
   private cardsButton(title: String, screenName: string) {
     const active = this.state.activeScreen === screenName;
     return (
@@ -319,15 +324,22 @@ export default class App extends React.Component<
 
   private async share() {
     try {
-      //needs.filter(card => this.state.selectedCards.indexOf(card.id) != -1).map(card => card.data.)
-
+      const selectedCardsString = App.concatSelectedCards(
+        this.getSelectedCardsList(),
+      );
       await Share.share({
-        message:
-          'React Native | A framework for building native apps using React',
+        message: selectedCardsString,
       });
     } catch (error) {
       console.log(error.message);
     }
+  }
+
+  private static concatSelectedCards(cards: Card[]) {
+    return cards
+      .map((card) => card.data.map((d) => d.text).join(', '))
+      .map((text) => `- ${text}`)
+      .join('\n');
   }
 }
 

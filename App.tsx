@@ -314,7 +314,7 @@ export default class App extends React.Component<
           <Icon
             name={icon}
             size={20}
-            style={[active ? styles.buttonText : styles.inactiveText]}
+            style={[styles.buttonText, !active && styles.inactiveText]}
           />
         </TouchableOpacity>
       </View>
@@ -329,9 +329,7 @@ export default class App extends React.Component<
       await Share.share({
         message: selectedCardsString,
       });
-    } catch (error) {
-      console.log(error.message);
-    }
+    } catch (error) {}
   }
 
   private static concatSelectedCards(cards: Card[]) {
@@ -379,6 +377,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 20,
+    color: 'black',
   },
   inactiveText: {
     color: 'grey',

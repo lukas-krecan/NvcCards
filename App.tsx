@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ListRenderItemInfo,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,41 +20,26 @@ import DraggableFlatList from 'react-native-draggable-flatlist';
 type CardProps = {
   card: Card;
   selected: boolean;
-  onClick: () => void;
+  onClick: (card: Card) => void;
   drag?: () => void;
   isDragging?: boolean;
 };
 
-class CardView extends React.PureComponent<CardProps> {
-  render() {
-    const card = this.props.card;
-    return (
-      <TouchableOpacity
-        onLongPress={this.props.drag}
-        onPress={this.props.onClick}
-        style={[
-          styles.card,
-          this.props.selected &&
-            (card.id.startsWith('n')
-              ? styles.selectedNeed
-              : styles.selectedFeeling),
-        ]}>
-        <View>
-          {card.data.map((line, i) => {
-            const fontSize = CardView.getFontSize(line);
-            return (
-              <Text style={[styles.cardText, {fontSize: fontSize}]} key={i}>
-                {line.text}
-              </Text>
-            );
-          })}
-        </View>
-      </TouchableOpacity>
-    );
-  }
+const CardView = (props: CardProps) => {
+  const card = props.card;
 
-  private static getFontSize(card: CardData): number {
-    const size = card.size ? card.size : CardView.guessFontSize(card.text);
+  const guessFontSize = (text: string): number => {
+    if (text.length < 20) {
+      return 1;
+    } else if (text.length < 25) {
+      return 2;
+    } else {
+      return 3;
+    }
+  };
+
+  const getFontSize = (cardData: CardData): number => {
+    const size = cardData.size ? cardData.size : guessFontSize(cardData.text);
 
     switch (size) {
       case 1:
@@ -63,50 +49,89 @@ class CardView extends React.PureComponent<CardProps> {
       default:
         return 13;
     }
-  }
+  };
 
-  private static guessFontSize(text: string): number {
-    if (text.length < 20) {
-      return 1;
-    } else if (text.length < 25) {
-      return 2;
-    } else {
-      return 3;
-    }
+  return (
+    <TouchableOpacity
+      onLongPress={props.drag}
+      onPress={onPress}
+      style={[
+        styles.card,
+        props.selected &&
+          (card.id.startsWith('n')
+            ? styles.selectedNeed
+            : styles.selectedFeeling),
+      ]}>
+      <View>
+        {card.data.map((line, i) => {
+          const fontSize = getFontSize(line);
+          return (
+            <Text style={[styles.cardText, {fontSize: fontSize}]} key={i}>
+              {line.text}
+            </Text>
+          );
+        })}
+      </View>
+    </TouchableOpacity>
+  );
+
+  function onPress() {
+    props.onClick(card);
   }
-}
+};
 
 type CardListProps = {
   cards: Card[];
   selectedCards: string[];
   onCardClick: (card: Card) => void;
-  active: boolean;
 };
 
-class CardList extends React.PureComponent<CardListProps> {
-  render() {
+const CardList = (props: CardListProps) => {
+  const {cards} = props;
+
+  const isSelected = (item: Card): boolean => {
+    return props.selectedCards.indexOf(item.id) !== -1;
+  };
+
+  const renderItem = (item: ListRenderItemInfo<Card>) => {
+    const card = item.item;
     return (
-      <FlatList
-        style={this.props.active ? styles.container : styles.hidden}
-        contentInsetAdjustmentBehavior="automatic"
-        data={this.props.cards}
-        numColumns={1}
-        keyExtractor={(item) => item.id}
-        renderItem={({item}) => (
-          <CardView
-            card={item}
-            selected={this.isSelected(item)}
-            onClick={() => this.props.onCardClick(item)}
-          />
-        )}
+      <CardView
+        card={card}
+        selected={isSelected(card)}
+        onClick={props.onCardClick}
       />
     );
-  }
+  };
 
-  private isSelected(item: Card): boolean {
-    return this.props.selectedCards.indexOf(item.id) !== -1;
-  }
-}
+  const key = (card: Card) => card.id;
+
+  return (
+    <FlatList
+      contentInsetAdjustmentBehavior="automatic"
+      data={cards}
+      numColumns={1}
+      keyExtractor={key}
+      renderItem={renderItem}
+    />
+  );
+};
+
+type HidingCardListProps = CardListProps & {active: boolean};
+
+const HidingCardList = (props: HidingCardListProps) => {
+  const {active} = props;
+
+  return (
+    <View style={active ? styles.container : styles.hidden}>
+      <CardList
+        cards={props.cards}
+        selectedCards={props.selectedCards}
+        onCardClick={props.onCardClick}
+      />
+    </View>
+  );
+};
 
 type SelectedCardListProps = {
   cards: Card[];
@@ -215,24 +240,24 @@ export default class App extends React.Component<
     return (
       <SafeAreaView style={{flex: 1}}>
         <View style={{flex: 100}}>
-          <CardList
+          <HidingCardList
             cards={needs}
             selectedCards={selectedCards}
-            onCardClick={(item) => this.selectCard(item)}
+            onCardClick={this.selectCard.bind(this)}
             active={activeScreen === needsScreen}
           />
-          <CardList
+          <HidingCardList
             cards={feelings}
             selectedCards={selectedCards}
-            onCardClick={(item) => this.selectCard(item)}
+            onCardClick={this.selectCard.bind(this)}
             active={activeScreen === feelingsScreen}
           />
           <SelectedCardList
             cards={selectedCardsList}
             selectedCards={selectedCards}
-            onCardClick={(item) => this.selectCard(item)}
+            onCardClick={this.selectCard.bind(this)}
             active={activeScreen === selectionScreen}
-            onCardDrag={(data) => this.moveSelectedCard(data)}
+            onCardDrag={this.moveSelectedCard.bind(this)}
           />
           <Help active={activeScreen === helpScreen} />
         </View>
@@ -263,9 +288,7 @@ export default class App extends React.Component<
   }
 
   private getSelectedCardsList() {
-    return this.state.selectedCards.map((id) =>
-        findCard(id),
-    );
+    return this.state.selectedCards.map((id) => findCard(id));
   }
 
   private cardsButton(title: String, screenName: string) {

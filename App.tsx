@@ -156,44 +156,41 @@ type SelectedCardListProps = {
   onCardDrag: (data: readonly Card[] | null) => void;
 };
 
-class SelectedCardList extends React.PureComponent<SelectedCardListProps> {
-  render() {
-    return (
-      <View style={this.props.active ? styles.container : styles.hidden}>
-        <DraggableFlatList
-          ListEmptyComponent={
-            <Text style={[{textAlign: 'center'}, {marginTop: 20}]}>
-              Nejsou vybrány žádné kartičky
-            </Text>
-          }
-          contentInsetAdjustmentBehavior="automatic"
-          data={this.props.cards}
-          keyExtractor={(item) => item.id}
-          renderItem={({item, index, drag, isActive}) => (
-            <CardView
-              card={item}
-              selected={this.isSelected(item)}
-              onClick={() => this.props.onCardClick(item)}
-              drag={drag}
-              isDragging={isActive}
-            />
-          )}
-          onDragEnd={({data}) => this.props.onCardDrag(data)}
-        />
-        {this.props.cards.length < 5 && this.props.cards.length > 0 && (
-          <Text style={[{textAlign: 'center', margin: 10, color: 'grey'}]}>
-            Pokud chcete změnit pořadí kartiček, stačí jednu z nich chvíli
-            podržet a pak přesunout.
-          </Text>
-        )}
-      </View>
-    );
-  }
+const SelectedCardList = (props: SelectedCardListProps) => {
+  const isSelected = (item: Card): boolean =>
+    props.selectedCards.indexOf(item.id) !== -1;
 
-  private isSelected(item: Card): boolean {
-    return this.props.selectedCards.indexOf(item.id) !== -1;
-  }
-}
+  return (
+    <View style={props.active ? styles.container : styles.hidden}>
+      <DraggableFlatList
+        ListEmptyComponent={
+          <Text style={[{textAlign: 'center'}, {marginTop: 20}]}>
+            Nejsou vybrány žádné kartičky
+          </Text>
+        }
+        contentInsetAdjustmentBehavior="automatic"
+        data={props.cards}
+        keyExtractor={(item) => item.id}
+        renderItem={({item, index, drag, isActive}) => (
+          <CardView
+            card={item}
+            selected={isSelected(item)}
+            onClick={() => props.onCardClick(item)}
+            drag={drag}
+            isDragging={isActive}
+          />
+        )}
+        onDragEnd={({data}) => props.onCardDrag(data)}
+      />
+      {props.cards.length < 5 && props.cards.length > 0 && (
+        <Text style={[{textAlign: 'center', margin: 10, color: 'grey'}]}>
+          Pokud chcete změnit pořadí kartiček, stačí jednu z nich chvíli podržet
+          a pak přesunout.
+        </Text>
+      )}
+    </View>
+  );
+};
 
 type NvcCardsAppProps = {};
 

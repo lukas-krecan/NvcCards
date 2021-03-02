@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {memo} from 'react';
+import {memo, PropsWithChildren} from 'react';
 import {
   AppState,
   FlatList,
@@ -96,41 +96,43 @@ type CardListProps = {
   onCardClick: (card: Card) => void;
 };
 
-const CardList = memo(
-  (props: CardListProps) => {
-    const {cards} = props;
+const cardListChanged = (
+  prevProps: Readonly<PropsWithChildren<CardListProps>>,
+  nextProps: Readonly<PropsWithChildren<CardListProps>>,
+): boolean => {
+  return arrayEquals(prevProps.selectedCards, nextProps.selectedCards);
+};
 
-    const isSelected = (item: Card): boolean => {
-      return props.selectedCards.indexOf(item.id) !== -1;
-    };
+const CardList = memo((props: CardListProps) => {
+  const {cards} = props;
 
-    const renderItem = (item: ListRenderItemInfo<Card>) => {
-      const card = item.item;
-      return (
-        <CardView
-          card={card}
-          selected={isSelected(card)}
-          onClick={props.onCardClick}
-        />
-      );
-    };
+  const isSelected = (item: Card): boolean => {
+    return props.selectedCards.indexOf(item.id) !== -1;
+  };
 
-    const key = (card: Card) => card.id;
-
+  const renderItem = (item: ListRenderItemInfo<Card>) => {
+    const card = item.item;
     return (
-      <FlatList
-        contentInsetAdjustmentBehavior="automatic"
-        data={cards}
-        numColumns={1}
-        keyExtractor={key}
-        renderItem={renderItem}
+      <CardView
+        card={card}
+        selected={isSelected(card)}
+        onClick={props.onCardClick}
       />
     );
-  },
-  (prevProps, nextProps) => {
-    return arrayEquals(prevProps.selectedCards, nextProps.selectedCards);
-  },
-);
+  };
+
+  const key = (card: Card) => card.id;
+
+  return (
+    <FlatList
+      contentInsetAdjustmentBehavior="automatic"
+      data={cards}
+      numColumns={1}
+      keyExtractor={key}
+      renderItem={renderItem}
+    />
+  );
+}, cardListChanged);
 
 type HidingCardListProps = CardListProps & {active: boolean};
 
@@ -139,49 +141,49 @@ const HidingCardList = (props: HidingCardListProps) => {
 
   return (
     <View style={active ? styles.container : styles.hidden}>
-      <CardList
-        cards={props.cards}
-        selectedCards={props.selectedCards}
-        onCardClick={props.onCardClick}
-      />
+      <CardList {...props} />
     </View>
   );
 };
 
-type SelectedCardListProps = {
-  cards: Card[];
-  selectedCards: string[];
-  onCardClick: (card: Card) => void;
-  active: boolean;
+type SelectedCardListProps = CardListProps & {
   onCardDrag: (data: readonly Card[] | null) => void;
 };
 
-const SelectedCardList = (props: SelectedCardListProps) => {
+const SelectedCardList = memo((props: SelectedCardListProps) => {
   const isSelected = (item: Card): boolean =>
     props.selectedCards.indexOf(item.id) !== -1;
 
   return (
+    <DraggableFlatList
+      ListEmptyComponent={
+        <Text style={[{textAlign: 'center'}, {marginTop: 20}]}>
+          Nejsou vybrány žádné kartičky
+        </Text>
+      }
+      contentInsetAdjustmentBehavior="automatic"
+      data={props.cards}
+      keyExtractor={(item) => item.id}
+      renderItem={({item, index, drag, isActive}) => (
+        <CardView
+          card={item}
+          selected={isSelected(item)}
+          onClick={() => props.onCardClick(item)}
+          drag={drag}
+          isDragging={isActive}
+        />
+      )}
+      onDragEnd={({data}) => props.onCardDrag(data)}
+    />
+  );
+}, cardListChanged);
+
+type SelectedCardPanelProps = SelectedCardListProps & {active: boolean};
+
+const SelectedCardPanel = (props: SelectedCardPanelProps) => {
+  return (
     <View style={props.active ? styles.container : styles.hidden}>
-      <DraggableFlatList
-        ListEmptyComponent={
-          <Text style={[{textAlign: 'center'}, {marginTop: 20}]}>
-            Nejsou vybrány žádné kartičky
-          </Text>
-        }
-        contentInsetAdjustmentBehavior="automatic"
-        data={props.cards}
-        keyExtractor={(item) => item.id}
-        renderItem={({item, index, drag, isActive}) => (
-          <CardView
-            card={item}
-            selected={isSelected(item)}
-            onClick={() => props.onCardClick(item)}
-            drag={drag}
-            isDragging={isActive}
-          />
-        )}
-        onDragEnd={({data}) => props.onCardDrag(data)}
-      />
+      <SelectedCardList {...props} />
       {props.cards.length < 5 && props.cards.length > 0 && (
         <Text style={[{textAlign: 'center', margin: 10, color: 'grey'}]}>
           Pokud chcete změnit pořadí kartiček, stačí jednu z nich chvíli podržet
@@ -264,7 +266,7 @@ export default class App extends React.Component<
             onCardClick={this.selectCard.bind(this)}
             active={activeScreen === feelingsScreen}
           />
-          <SelectedCardList
+          <SelectedCardPanel
             cards={selectedCardsList}
             selectedCards={selectedCards}
             onCardClick={this.selectCard.bind(this)}

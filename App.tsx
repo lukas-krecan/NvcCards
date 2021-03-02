@@ -1,14 +1,15 @@
 import * as React from 'react';
+import {memo} from 'react';
 import {
   AppState,
   FlatList,
+  ListRenderItemInfo,
   SafeAreaView,
-  StyleSheet,
   Share,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  ListRenderItemInfo,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -80,42 +81,56 @@ const CardView = (props: CardProps) => {
   }
 };
 
+function arrayEquals(a: Array<string>, b: Array<string>) {
+  return (
+    Array.isArray(a) &&
+    Array.isArray(b) &&
+    a.length === b.length &&
+    a.every((val, index) => val === b[index])
+  );
+}
+
 type CardListProps = {
   cards: Card[];
   selectedCards: string[];
   onCardClick: (card: Card) => void;
 };
 
-const CardList = (props: CardListProps) => {
-  const {cards} = props;
+const CardList = memo(
+  (props: CardListProps) => {
+    const {cards} = props;
 
-  const isSelected = (item: Card): boolean => {
-    return props.selectedCards.indexOf(item.id) !== -1;
-  };
+    const isSelected = (item: Card): boolean => {
+      return props.selectedCards.indexOf(item.id) !== -1;
+    };
 
-  const renderItem = (item: ListRenderItemInfo<Card>) => {
-    const card = item.item;
+    const renderItem = (item: ListRenderItemInfo<Card>) => {
+      const card = item.item;
+      return (
+        <CardView
+          card={card}
+          selected={isSelected(card)}
+          onClick={props.onCardClick}
+        />
+      );
+    };
+
+    const key = (card: Card) => card.id;
+
     return (
-      <CardView
-        card={card}
-        selected={isSelected(card)}
-        onClick={props.onCardClick}
+      <FlatList
+        contentInsetAdjustmentBehavior="automatic"
+        data={cards}
+        numColumns={1}
+        keyExtractor={key}
+        renderItem={renderItem}
       />
     );
-  };
-
-  const key = (card: Card) => card.id;
-
-  return (
-    <FlatList
-      contentInsetAdjustmentBehavior="automatic"
-      data={cards}
-      numColumns={1}
-      keyExtractor={key}
-      renderItem={renderItem}
-    />
-  );
-};
+  },
+  (prevProps, nextProps) => {
+    return arrayEquals(prevProps.selectedCards, nextProps.selectedCards);
+  },
+);
 
 type HidingCardListProps = CardListProps & {active: boolean};
 
@@ -322,8 +337,7 @@ export default class App extends React.Component<
     if (selected.indexOf(item.id) !== -1) {
       this.setState({selectedCards: selected.filter((id) => id !== item.id)});
     } else {
-      selected.push(item.id);
-      this.setState({selectedCards: selected});
+      this.setState({selectedCards: selected.concat([item.id])});
     }
   }
 

@@ -56,6 +56,7 @@ const CardView = (props: CardProps) => {
     <TouchableOpacity
       onLongPress={props.drag}
       onPress={onPress}
+      delayPressIn={100}
       style={[
         styles.card,
         props.selected &&
